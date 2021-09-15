@@ -1,0 +1,42 @@
+syntax = "proto2";
+package proto;
+
+option go_package = "./protocol";
+
+service PositionService{
+  rpc Buy(BuyRequest) returns (BuyReply){}
+  rpc Sell(SellRequest) returns(SellReply){}
+  rpc Get(GetRequest) returns(GetReply){}
+}
+
+//-----------BuyRequest
+
+message BuyRequest{
+  required string userToken = 1;
+  required bytes price = 2;
+}
+
+message BuyReply{
+  required string message = 1;
+}
+
+//-----------SellRequest
+
+message SellRequest{
+  required string userToken = 1;
+  required bytes price = 2;
+}
+
+message SellReply{
+  required string message = 1;
+}
+
+//-----------GetRequest
+
+message GetRequest{
+  required string userToken = 1;
+}
+
+message GetReply{
+  required bytes butchOfPrices = 1;
+}

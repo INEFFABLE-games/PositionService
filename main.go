@@ -1,12 +1,12 @@
 package main
 
 import (
-	"PositionService/internal/config"
-	protocol "PositionService/internal/protocol"
-	"PositionService/internal/server"
-	"PositionService/internal/service"
 	"context"
 	"fmt"
+	"github.com/INEFFABLE-games/PositionService/internal/config"
+	"github.com/INEFFABLE-games/PositionService/internal/server"
+	"github.com/INEFFABLE-games/PositionService/internal/service"
+	"github.com/INEFFABLE-games/PositionService/protocol"
 	"github.com/INEFFABLE-games/PriceService/models"
 	protocol2 "github.com/INEFFABLE-games/PriceService/protocol"
 	log "github.com/sirupsen/logrus"
@@ -32,7 +32,7 @@ func main() {
 	go func() {
 		grpcServer := grpc.NewServer()
 		positionServer := server.NewPositionServer()
-		protocol.RegisterPositionServiceServer(grpcServer,positionServer)
+		protocol.RegisterPositionServiceServer(grpcServer, positionServer)
 
 		lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%v", cfg.PosGrpcPort))
 		if err != nil {

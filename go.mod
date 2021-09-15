@@ -1,4 +1,4 @@
-module PositionService
+module github.com/INEFFABLE-games/PositionService
 
 go 1.16
 

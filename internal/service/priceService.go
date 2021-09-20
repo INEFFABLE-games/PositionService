@@ -11,12 +11,12 @@ import (
 )
 
 type PriceService struct {
-	priceChannel chan []models.Price
+	currentPrices *[]models.Price
 }
 
-func (p *PriceService) Refresh(ctx context.Context,stream protocol.PriceService_SendClient){
+func (p *PriceService) Refresh(ctx context.Context, stream protocol.PriceService_SendClient) {
 
-	ticker := time.NewTicker(1 * time.Second)
+	ticker := time.NewTicker(1 * time.Millisecond)
 	for {
 		select {
 		case <-ctx.Done():
@@ -42,13 +42,14 @@ func (p *PriceService) Refresh(ctx context.Context,stream protocol.PriceService_
 			}
 
 			go func() {
-				p.priceChannel <- butchOfPrices
+				*p.currentPrices = butchOfPrices
 			}()
 		}
 	}
-
 }
 
-func NewPriceService(priceChannel chan []models.Price)*PriceService{
-	return &PriceService{priceChannel: priceChannel}
+func NewPriceService(currentPrices *[]models.Price) *PriceService {
+	return &PriceService{
+		currentPrices: currentPrices,
+	}
 }

@@ -10,12 +10,14 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// PositionServer structure for PositionServer object
 type PositionServer struct {
 	positionService *service.PositionService
 
 	protocol.UnimplementedPositionServiceServer
 }
 
+// Buy rpc buy function
 func (p *PositionServer) Buy(ctx context.Context, request *protocol.BuyRequest) (*protocol.BuyReply, error) {
 
 	price := models.Price{}
@@ -41,6 +43,7 @@ func (p *PositionServer) Buy(ctx context.Context, request *protocol.BuyRequest) 
 	return &protocol.BuyReply{Message: &mes}, err
 }
 
+// Sell rpc sell function
 func (p *PositionServer) Sell(ctx context.Context, request *protocol.SellRequest) (*protocol.SellReply, error) {
 
 	price := models.Price{}
@@ -58,6 +61,7 @@ func (p *PositionServer) Sell(ctx context.Context, request *protocol.SellRequest
 	return &protocol.SellReply{Message: &mes}, err
 }
 
+// Get rpc get function
 func (p *PositionServer) Get(ctx context.Context, request *protocol.GetRequest) (*protocol.GetReply, error) {
 	userToken := request.GetUserToken()
 
@@ -74,6 +78,7 @@ func (p *PositionServer) Get(ctx context.Context, request *protocol.GetRequest) 
 	return &protocol.GetReply{ButchOfPrices: marshalRes}, err
 }
 
+// NewPositionServer creates PositionServer object
 func NewPositionServer(positionService *service.PositionService) *PositionServer {
 	return &PositionServer{positionService: positionService}
 }

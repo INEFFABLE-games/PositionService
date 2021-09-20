@@ -10,10 +10,12 @@ import (
 	"time"
 )
 
+// PriceService structure for PriceService objects
 type PriceService struct {
 	currentPrices *[]models.Price
 }
 
+// Refresh get fresh prices from grpc stream and write into currentPrices map
 func (p *PriceService) Refresh(ctx context.Context, stream protocol.PriceService_SendClient) {
 
 	ticker := time.NewTicker(1 * time.Millisecond)
@@ -48,6 +50,7 @@ func (p *PriceService) Refresh(ctx context.Context, stream protocol.PriceService
 	}
 }
 
+// NewPriceService creates PriceService object
 func NewPriceService(currentPrices *[]models.Price) *PriceService {
 	return &PriceService{
 		currentPrices: currentPrices,

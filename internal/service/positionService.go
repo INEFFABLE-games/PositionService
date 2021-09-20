@@ -11,21 +11,24 @@ import (
 	"time"
 )
 
+// PositionService structure for PositionService object
 type PositionService struct {
 	currentPrices *[]models.Price
 	positionRepo  *repository.PositionRepository
 }
 
-func (p *PositionService) getPNL(price models.Price) int {
+// getPNL calculate and returns pnl for position
+func (p *PositionService) getPNL(pos models.Price) int {
 	var pnl int
 	for _, v := range *p.currentPrices {
-		if v.Name == price.Name {
-			pnl = int(price.Ask - v.Bid)
+		if v.Name == pos.Name {
+			pnl = int(pos.Ask - v.Bid)
 		}
 	}
 	return pnl
 }
 
+// isFresh check is position up to date
 func (p *PositionService) isFresh(price models.Price) bool {
 
 	for _, v := range *p.currentPrices {
@@ -41,6 +44,7 @@ func (p *PositionService) isFresh(price models.Price) bool {
 	return false
 }
 
+// Buy process buy request
 func (p *PositionService) Buy(ctx context.Context, price models.Price, owner string) error {
 	if p.isFresh(price) {
 		return p.positionRepo.Insert(ctx, price, owner)
@@ -48,6 +52,7 @@ func (p *PositionService) Buy(ctx context.Context, price models.Price, owner str
 	return errors.New("price isn't fresh")
 }
 
+// Sell process sell request
 func (p *PositionService) Sell(ctx context.Context, price models.Price, owner string) error {
 	if p.isFresh(price) {
 
@@ -72,10 +77,12 @@ func (p *PositionService) Sell(ctx context.Context, price models.Price, owner st
 	return errors.New("price isn't fresh")
 }
 
+// GetByOwner call getByOwner function on repository
 func (p *PositionService) GetByOwner(ctx context.Context, owner string) ([]models.Price, error) {
 	return p.positionRepo.GetByOwner(ctx, owner)
 }
 
+// ListenNotify starts pg notify listener
 func (p *PositionService) ListenNotify() error {
 	_, err := pgx.NewConnPool(pgx.ConnPoolConfig{
 		ConnConfig: pgx.ConnConfig{
@@ -128,6 +135,7 @@ func (p *PositionService) ListenNotify() error {
 	return nil
 }
 
+// NewPositionService creates PositionService object
 func NewPositionService(positionRepo *repository.PositionRepository, currentPrices *[]models.Price) *PositionService {
 
 	service := &PositionService{

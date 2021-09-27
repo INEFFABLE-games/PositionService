@@ -9,32 +9,28 @@ service PositionService{
   rpc Get(GetRequest) returns(GetReply){}
 }
 
-//-----------BuyRequest
+
+//-----------positions
 
 message BuyRequest{
-  required string userToken = 1;
-  required bytes price = 2;
+  required bytes price = 1;
 }
 
 message BuyReply{
   required string message = 1;
 }
 
-//-----------SellRequest
 
 message SellRequest{
-  required string userToken = 1;
-  required bytes price = 2;
+  required bytes price = 1;
 }
 
 message SellReply{
   required string message = 1;
 }
 
-//-----------GetRequest
 
 message GetRequest{
-  required string userToken = 1;
 }
 
 message GetReply{

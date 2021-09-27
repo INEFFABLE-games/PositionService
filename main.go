@@ -40,8 +40,10 @@ func main() {
 		log.Errorf("unable to connect with postgres %v", err)
 	}
 
+	pricesForPNL := make(map[string]map[string]chan models.Price)
+
 	positionRepository := repository.NewPositionRepository(sqlConn)
-	positionService := service.NewPositionService(positionRepository, &currentPrices)
+	positionService := service.NewPositionService(ctx, positionRepository, currentPrices, pricesForPNL)
 
 	//start position grpc server
 	go func() {
@@ -70,11 +72,9 @@ func main() {
 
 	signal.Notify(c, os.Interrupt)
 
-	priceService := service.NewPriceService(&currentPrices)
-
 	//starts listening stream and refresh current price list
 	go func() {
-		priceService.Refresh(ctx, stream)
+		positionService.Refresh(ctx, stream)
 	}()
 
 	<-c

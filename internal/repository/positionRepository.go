@@ -16,14 +16,25 @@ type PositionRepository struct {
 // Insert execute insert command into database
 func (p *PositionRepository) Insert(ctx context.Context, price models.Price, owner string) error {
 	price.Id = fmt.Sprintf("%d", time.Now().Unix())
-	_, err := p.db.ExecContext(ctx, "insert into positions(id,owner,name,ask,bid) values($1,$2,$3,$4,$5)", price.Id, owner, price.Name, price.Bid, 0)
+	_, err := p.db.ExecContext(ctx, "insert into positions(id,owner,name,ask,bid) values($1,$2,$3,$4,$5)", price.Id, owner, price.Name, price.Ask, 0)
 	return err
 }
 
 // Update execute update command into database
 func (p *PositionRepository) Update(ctx context.Context, price models.Price, owner string) error {
-	_, err := p.db.ExecContext(ctx, "update positions set bid=$1 where owner=$2 and name=$3", price.Ask, owner, price.Name)
+	_, err := p.db.ExecContext(ctx, "update positions set bid=$1 where owner=$2 and name=$3", price.Bid, owner, price.Name)
 	return err
+}
+
+func (u *PositionRepository) UpdateBalance(ctx context.Context, uid string, balance int64) error {
+	_, err := u.db.ExecContext(ctx, "update users set balance = $2 where uid = $1 ", uid, balance)
+	return err
+}
+
+func (u *PositionRepository) GetBalance(ctx context.Context, uid string) (int64, error) {
+	var balance int64
+	err := u.db.QueryRowContext(ctx, "select (balance) from users where uid = $1", uid).Scan(&balance)
+	return balance, err
 }
 
 // GetByOwner execute select command into database and return all owner prices
